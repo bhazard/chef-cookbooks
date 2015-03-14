@@ -1,0 +1,58 @@
+# Vagrantfile for creating WSO2 servers via Chef
+# ----------------------------------------------------------------------------
+
+# The management console for a given VM will be available at either URL:
+#   https://localhost:CARBON_PORT
+#   https://VM_IP:9443
+#     default login creds are admin/admin
+#
+# CARBON_PORT is 9443+index ... 9443 for esb, 9444 for is, etc.
+
+# ----------------------------------------------------------------------------
+# Things that might need tweaking for your network
+# ----------------------------------------------------------------------------
+
+DOMAIN = 'wso2.local'
+SUBNET = '192.168.6'
+DEBUG = false   # Set to true for verbose output
+IP = "#{SUBNET}.10"
+MEMORY = "4096"
+
+Vagrant.require_version '>= 1.6.5'
+VAGRANTFILE_API_VERSION = '2'
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.cache.auto_detect = true if Vagrant.has_plugin?('vagrant-cachier')
+  config.omnibus.chef_version = 'latest' if Vagrant.has_plugin?("vagrant-omnibus")
+  config.berkshelf.enabled = true
+
+  config.vm.box = 'chef/ubuntu-14.04'
+
+  config.vm.hostname = "wso2cookbook.#{DOMAIN}"
+  config.vm.network :private_network, ip: IP
+
+  config.vm.provider :virtualbox do |vb|
+    vb.name = config.vm.hostname
+    vb.customize ["modifyvm", :id, "--memory", MEMORY]
+  end
+
+#  config.vm.define 'wso2cookbook', primary: true do |vmconfig|
+  config.vm.provision :chef_solo do |chef|
+    chef.log_level = :debug if DEBUG
+    chef.verbose_logging = DEBUG
+#    chef.cookbooks_path = ["chef/cookbooks"]
+    chef.file_cache_path = "/vagrant/chef_file_cache"
+#        chef.add_recipe "wso2::#{component}"
+    chef.json = {
+      mysql: {
+        server_root_password: 'rootpass',
+        server_debian_password: 'debpass',
+        server_repl_password: 'replpass'
+      }
+    }
+
+    chef.run_list = [
+      'recipe[wso2::default]'
+    ]
+  end
+end
