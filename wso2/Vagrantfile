@@ -52,7 +52,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     }
 
     chef.run_list = [
-      'recipe[wso2::default]'
+      'recipe[wso2::esb]'
     ]
   end
 end

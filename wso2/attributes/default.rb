@@ -12,15 +12,16 @@ default['wso2']['init_script'] = 'bin/wso2server.sh'
 default['wso2']['install_root'] = '/opt'
 
 # Versions of each component -- these must match the files in the download location, specified above
+default['wso2']['wso2esb_version'] = '4.8.1'
 default['wso2']['wso2greg_version'] = '4.6.0'
-default['wso2']['wso2is_version'] = '4.6.0'
+default['wso2']['wso2is_version'] = '5.0.0'
 default['wso2']['wso2bam_version'] = '2.5.0'
 default['wso2']['wso2ues_version'] = '1.0.0'
 
-%w(wso2greg wso2is wso2bam wso2ues).each do |component|
+
+%w(wso2esb wso2greg wso2is wso2bam wso2ues).each do |component|
   default['wso2']["#{component}_tarball_url"] = "#{node['wso2']['download_url_base']}/#{component}-#{node['wso2'][component+'_version']}#{node['wso2']['tarball_extension']}"
-  default['wso2']["#{component}_install_dir"] = "#{node['wso2']['install_root']}/#{component}"
-  default['wso2']["#{component}_src_dir"] = "#{node['wso2']['download_dir']}/#{component}-#{node['wso2'][component+'_version']}"
+  default['wso2']["#{component}_install_dir"] = "#{node['wso2']['install_root']}/#{component}-#{node['wso2'][component+'_version']}"
 end
 
 default['java']['install_flavor'] = 'oracle'

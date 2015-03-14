@@ -1,20 +1,21 @@
 action :install do
   tarball_file = "#{new_resource.download_dir}/#{::File.basename(new_resource.tarball_url)}"
+  install_root = "#{node['wso2']['install_root']}"
 
   remote_file tarball_file do
     action :create_if_missing
     source new_resource.tarball_url
   end
 
-  execute "unzip #{new_resource.name} source" do
+  execute "unzip -o #{tarball_file} -d #{install_root}" do
 #    command "tar -zxvf #{tarball_file}"
-    command "unzip #{tarball_file}"
-    cwd new_resource.download_dir
+    command "unzip -o #{tarball_file} -d #{install_root}"
+ #   cwd new_resource.download_dir
   end
 
-  link new_resource.install_dir do
-    to new_resource.src_dir
-  end
+  # link new_resource.install_dir do
+  #   to new_resource.src_dir
+  # end
 
   directory "#{new_resource.install_dir}/logs"
 
