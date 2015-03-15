@@ -121,7 +121,7 @@ recommended version.  Several of the components do not yet work with the version
 In the `Vagrantfile`, you could override the JDK version by setting `chef.json`
 as follows:
 
-```json
+```ruby
 chef.json = {
   java: {
     install_flavor: 'oracle',
