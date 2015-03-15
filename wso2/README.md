@@ -40,9 +40,15 @@ Built and tested on Ubuntu 14.04.
     <td><tt>Chef::Config[:file_cache_path]</tt></td>
   </tr>
   <tr>
+    <td><tt>['wso2']['download_url_base']</tt></td>
+    <td>string</td>
+    <td>URL hosting the WSO2 tarballs.</td>
+    <td><tt></tt></td>
+  </tr>
+  <tr>
     <td><tt>['java']['jdk_version']</tt></td>
     <td>string</td>
-    <td>Oracle JDK version.</td>
+    <td>Determines which version of the Oracle JDK to install.</td>
     <td><tt>7</tt></td>
   </tr>
 </table>
@@ -108,7 +114,25 @@ formats, such as `.tar.gz`.
 For convenience, the `Vagrantfile` sets the chef cache directory to a local
 directory to allow the files to be stored across instance destroys.
 
-### Changing the Component Version
+### Changing the Version of a Component
+
+To update the version of a specific component, you must make the appropriate
+file available and override the default version number for the given component.
+For example, if you want to update the IS server to version 5.2.0, you could 
+edit the `Vagrantfile` to include
+
+```ruby
+chef.json = {
+  wso2: {
+    is: {
+      version: '5.2.0'
+    }
+  }
+}
+```
+
+And place the `wso2is-5.2.0.zip` file in Chef's `file_cache_path`.  If you're using
+the supplied `Vagrantfile`, the file would be placed in `chef_file_cache`.
 
 ### Changing the Version of the JDK
 
