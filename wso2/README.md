@@ -8,6 +8,12 @@ This cookbook provides recipes to install the following WSO2 modules:
 * WSO2 Enterprise Service Bus (esb)
 * WSO2 Identity Server (is)
 
+The project includes a `Vagrantfile` that may be used for creating test instances
+for each of these components.  This facilitates recipe testing, but is also
+useful for playing with the various WSO2 components.
+
+For more information about the various WSO2 components, see the [WSO2 Website](http://wso2.com/products/).
+
 ## Supported Platforms
 
 Built and tested on Ubuntu 14.04.
@@ -24,7 +30,7 @@ Built and tested on Ubuntu 14.04.
   <tr>
     <td><tt>['wso2']['install_root']</tt></td>
     <td>string</td>
-    <td>Root path for installing the wso2comp-version directory.  Usually /opt or <code>/usr/local</code>.</td>
+    <td>Root path for installing the wso2comp-version directory.  Usually <code>/opt</code> or <code>/usr/local</code>.</td>
     <td><tt>/opt</tt></td>
   </tr>
   <tr>
@@ -43,10 +49,11 @@ Built and tested on Ubuntu 14.04.
 
 ## Usage
 
-### wso2::component-name
+### Use the wso2::component-name Chef Recipe
 
-Include `wso2::component-name` in your node's `run_list`.  For example, the
-following will install the Business Activity Monitor ("bam"):
+To install the component using Chef, include `wso2::component-name` in your 
+node's `run_list`.  For example, the following will install the Business 
+Activity Monitor ("bam"):
 
 ```json
 {
@@ -55,6 +62,8 @@ following will install the Business Activity Monitor ("bam"):
   ]
 }
 ```
+
+This recipe will also install the Oracle JDK.
 
 ### Testing with Vagrant
 
@@ -84,20 +93,48 @@ esb host started above would be found at
 https://esb:9443/carbon.  Note that by default, the WSO2 components respond only
 on https.
 
-To login to a new component, use the carbon default uid and pwd (`admin`/`admin`)
+To login to a new component, use the carbon default uid and pwd (`admin`/`admin`).
 
 ### WSO2 Download Files
 
 WSO2 houses their downloads behind an authenticated URL.  To facilitate automated
 installs, the downloadable files must be available to chef.  The recipe 
-attempts to use downloaded files that are found in the `chef_file_cache` directory.
-These must be named according to the WSO2 standard format: `wso2<component>-<version>.zip`,
+attempts to use downloaded files that are found in the directory
+specified by `Chef::Config[:file_cache_path]`.
+Files in this directory must be named according to the WSO2 standard format: `wso2<component>-<version>.zip`,
 for example, `wso2emm-1.1.0.zip`.  This recipe does not support other download
-formats, such as `.tar.gz`.  If the required download is not found, the recipe
-will attempt to download it from xxx.
+formats, such as `.tar.gz`.  
 
-For convenience, the `Vagrantfile` sets 
+For convenience, the `Vagrantfile` sets the chef cache directory to a local
+directory to allow the files to be stored across instance destroys.
 
+### Changing the Component Version
+
+### Changing the Version of the JDK
+
+The cookbook uses the [java cookbook](https://supermarket.chef.io/cookbooks/java)
+to install the JDK.  The default attributes may be overridden by setting the
+appropriate values.  This recipe installs Oracle version 7, which is the current
+recommended version.  Several of the components do not yet work with the version
+8 JDK.  The OpenJDK is not recommended by WSO2 at present.
+
+In the `Vagrantfile`, you could override the JDK version by setting `chef.json`
+as follows:
+
+```json
+chef.json = {
+  java: {
+    install_flavor: 'oracle',
+    jdk_version: '6'
+  }
+}
+```
+
+### Testing Recipes
+
+The cookbook was created using `berks`, which includes `kitchen` by default.
+The `.kitchen.yml` file has not been configured, so while `kitchen` commands
+will work, they don't do anything useful at the moment.  
 
 ## Contributing
 
