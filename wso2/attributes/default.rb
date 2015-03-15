@@ -20,8 +20,13 @@ default['wso2']['wso2bam_version'] = '2.5.0'
 default['wso2']['bam']['version'] = '2.5.0'
 
 default['wso2']['wso2emm_version'] = '1.1.0'
+default['wso2']['emm']['version'] = '1.1.0'
+
 default['wso2']['wso2esb_version'] = '4.8.1'
+default['wso2']['esb']['version'] = '4.8.1'
+
 default['wso2']['wso2is_version'] = '5.0.0'
+default['wso2']['is']['version'] = '5.0.0'
 
 default['wso2']['wso2greg_version'] = '4.6.0'
 default['wso2']['wso2ues_version'] = '1.0.0'
