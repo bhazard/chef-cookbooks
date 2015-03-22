@@ -1,16 +1,22 @@
-#! /bin/sh
+#!/bin/bash
 # /etc/init.d/<%=@script_name%>: start the <%=@script_name%>  daemon.
 
 # chkconfig: 345 80 20
-# description: <%=@script_name%>
+# description: <%=@script_name%> daemon
+# processname: <%=@script_name%>
 
 HOME=<%=@install_dir%>
+PIDFILE=$HOME/wso2carbon.pid
 USER=root
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
 
-prog=<%=@script_name%>
+PROG=<%=@script_name%>
 DESC="<%=@script_name%> daemon"
+
+if [ -e "$PIDFILE" ]; then
+  PID=`cat "$PIDFILE"`
+fi
 
 RETVAL=0
 
@@ -57,11 +63,29 @@ elif [ "$DISTRIBUTION" = "debian" ] ; then
     }
 fi
 
+status() {
+# Status should exit with 0 return code if running and 1 if not
+  RETVAL=0
+  if [ -f "$PIDFILE" ]; then
+    if [ -z "`ps axf | grep $PID | grep -v grep`" ]; then
+      echo "Process dead but pidfile exists"
+    else
+      echo "Running"
+    fi
+  else
+    echo "Service not running"
+    RETVAL=1
+  fi
+
+  return $RETVAL
+}
+
+
 start() {
     ulimit -n 65536
     ulimit -s 10240
     ulimit -c unlimited
-    echo -n $"Starting $prog: "
+    echo -n $"Starting $PROG: "
     cd $HOME
     nohup su - $USER -c "$HOME/<%=@init_script%>" >> ./logs/<%=@script_name%>.out 2>> ./logs/<%=@script_name%>.err < /dev/null &
     RETVAL=$?
@@ -72,33 +96,20 @@ start() {
 }
 
 stop() {
-    echo $"Stopping $prog: "
-    for pgid in `ps ax -o  "pid pgid args" | \grep '<%=@init_script%>' | awk '{print $2}'`; do
+    echo $"Stopping $PROG: "
+    for pgid in `ps ax -o  "pid pgid args" | \grep '<%=@init_script%>' | grep -v grep | awk '{print $2}'`; do
         for pid in `ps ax -o  "pid pgid args" | \grep -E $"[0-9]+ +$pgid +" | \grep java | awk '{print $1}'`; do
-            echo -n $"Stopping $prog($pid): "
+            echo -n $"Stopping $PROG($pid): "
             kill $pid
             RETVAL=$?
-            c=50
-            while [ $c -gt 0 ]; do
-                let c=$c-1
-                flag=1
-                for p in `ps ax -o  "pid pgid args" | \grep -E $"[0-9]+ +$pgid +"`; do
-                    flag=0
-                    break
-                done
-                if [ $flag -ne 0 ]; then
-                    break
-                fi
-                sleep .1
-            done
-            if [ $c -le 0 ]; then
-                RETVAL=1
-            fi
         done
     done
     [ $RETVAL -eq 0 ] && echo_success
     [ $RETVAL -ne 0 ] && echo_failure
     echo
+    if [ -e "$PIDFILE" ]; then
+        rm "$PIDFILE"
+    fi
     return $RETVAL
 }
 
@@ -113,6 +124,10 @@ restart() {
 }
 
 case "$1" in
+    status)
+        status
+        ;;
+
     start)
         start
         ;;
@@ -130,7 +145,7 @@ case "$1" in
         ;;
     
     *)
-        echo $"Usage: $0 {start|stop|reload|restart}"
+        echo $"Usage: $0 {status|start|stop|reload|restart}"
         exit 1
 esac
 
