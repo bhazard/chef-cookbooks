@@ -11,8 +11,8 @@ include_recipe 'zip'
 include_recipe 'java'
 
 wso2_component 'wso2esb' do
-  tarball_url node['wso2']['wso2esb_tarball_url']
+  tarball_url node['wso2']['esb']['tarball_url']
   download_dir node['wso2']['download_dir']
-  install_dir node['wso2']['wso2esb_install_dir']
+  install_dir node['wso2']['esb']['install_dir']
   init_script node['wso2']['init_script']
 end

@@ -11,8 +11,8 @@ include_recipe 'zip'
 include_recipe 'java'
 
 wso2_component 'wso2bam' do
-  tarball_url node['wso2']['wso2bam_tarball_url']
+  tarball_url node['wso2']['bam']['tarball_url']
   download_dir node['wso2']['download_dir']
-  install_dir node['wso2']['wso2bam_install_dir']
+  install_dir node['wso2']['bam']['install_dir']
   init_script node['wso2']['init_script']
 end
