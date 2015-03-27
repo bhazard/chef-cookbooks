@@ -1,14 +1,11 @@
 #
 # Cookbook Name:: wso2
-# Recipe:: bam
+# Recipe:: carbon
 #
 # Copyright (C) 2015 YOUR_NAME
 #
 # All rights reserved - Do Not Redistribute
 #
-
-# To-dos:
-# - 
 include_recipe 'apt'
 include_recipe 'zip'
 include_recipe 'java'
@@ -16,11 +13,11 @@ include_recipe 'java'
 wso2_user = 'root'
 wso2_group = 'root'
 
-install_dir = "#{node['wso2']['bam']['install_dir']}"
+install_dir = "#{node['wso2']['carbon']['install_dir']}"
 
-wso2_component 'bam' do
-  tarball_url node['wso2']['bam']['tarball_url']
-  install_dir node['wso2']['bam']['install_dir']
+wso2_component 'carbon' do
+  tarball_url node['wso2']['carbon']['tarball_url']
+  install_dir install_dir
   init_script node['wso2']['init_script']
 end
 

@@ -15,9 +15,9 @@
 DOMAIN = 'wso2.local'
 SUBNET = '192.168.6'
 DEBUG = false   # Set to true for verbose provisioner output
-MEMORY = '2048'
+MEMORY = '4096'
 
-WSO2_COMPONENTS = %w(as bam emm esb is)
+WSO2_COMPONENTS = %w(carbon as bam emm esb is)
 
 Vagrant.require_version '>= 1.6.5'
 VAGRANTFILE_API_VERSION = '2'
@@ -42,7 +42,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node.vm.network :private_network, ip: "#{SUBNET}.#{10 + index}"
 
       node.vm.provider :virtualbox do |vb|
-        vb.name = config.vm.hostname
+        vb.name = node.vm.hostname
         vb.customize ["modifyvm", :id, "--memory", MEMORY]
       end
 

@@ -14,6 +14,13 @@ useful for playing with the various WSO2 components.
 
 For more information about the various WSO2 components, see the [WSO2 Website](http://wso2.com/products/).
 
+## To-dos
+
+* Add support for production database
+* Add chef roles support, particularly for "development"
+* Set hostname properly throughout config files (now use "localhost")
+* Include version-specific config files for each product
+
 ## Supported Platforms
 
 Built and tested on Ubuntu 14.04.

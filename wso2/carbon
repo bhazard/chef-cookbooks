@@ -1,0 +1,170 @@
+#!/bin/bash
+# /etc/init.d/carbon: start the carbon  daemon.
+
+# chkconfig: 345 80 20
+# description: carbon daemon
+# processname: carbon
+
+HOME=/opt/wso2carbon-4.3.0
+PIDFILE=$HOME/wso2carbon.pid
+USER=root
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
+
+prog=carbon
+DESC="carbon daemon"
+
+if [ -e "$PIDFILE" ]; then
+  PID=`cat "$PIDFILE"`
+fi
+echo "PID is $PID"
+
+RETVAL=0
+
+# detect the distribution:
+if [ -f /etc/redhat-release -o -f /etc/fedora-release ] ; then
+  DISTRIBUTION="redhat"
+  elif [ -f /etc/SuSE-release ] ; then
+  DISTRIBUTION="suse"
+  elif [ -f /etc/debian_version ] ; then
+  DISTRIBUTION="debian"
+else
+  DISTRIBUTION="debian"
+fi
+
+# Source function library.
+[ "$DISTRIBUTION" = "redhat" ] && . /etc/init.d/functions
+[ "$DISTRIBUTION" = "suse" ] && . /etc/rc.status
+
+if [ "$DISTRIBUTION" = "suse" ] ; then
+    echo_success() {
+        rc_status -v
+    }
+    echo_failure() {
+        rc_status -v
+    }
+    success() {
+        echo_success
+    }
+    failure() {
+        echo_success
+    }
+elif [ "$DISTRIBUTION" = "debian" ] ; then
+    echo_success() {
+        echo ok
+    }
+    echo_failure() {
+        echo failed
+    }
+    success() {
+        echo_success
+    }
+    failure() {
+        echo_success
+    }
+fi
+
+status() {
+# Status should exit with 0 return code if running and 1 if not
+  RC=0
+  if [ -f "$PIDFILE" ]; then
+    if [ -z "`ps axf | grep $PID | grep -v grep`" ]; then
+      echo "Process dead but pidfile exists"
+    else
+      echo "Running"
+    fi
+  else
+    echo "Service not running"
+    RC=1
+  fi
+
+  return $RC
+}
+
+start() {
+    ulimit -n 65536
+    ulimit -s 10240
+    ulimit -c unlimited
+    echo -n $"Starting $prog: "
+    cd $HOME
+    nohup su - $USER -c "$HOME/bin/wso2server.sh" >> ./logs/carbon.out 2>> ./logs/carbon.err < /dev/null &
+    RETVAL=$?
+    [ $RETVAL -eq 0 ] && echo_success
+    [ $RETVAL -ne 0 ] && echo_failure
+    echo
+    return $RETVAL
+}
+
+stop() {
+    echo "Stopping $prog: "
+    for pgid in `ps ax -o  "pid pgid args" | \grep 'bin/wso2server.sh' | grep -v 'grep' | awk '{print $2}'`; do
+        for pid in `ps ax -o  "pid pgid args" | \grep -E $"[0-9]+ +$pgid +" | \grep java | awk '{print $1}'`; do
+            echo -n "Stopping $prog($pid): "
+            kill $pid
+            RETVAL=$?
+            c=0
+            while [ $c -gt 0 ]; do
+                let c=$c-1
+                flag=1
+                for p in `ps ax -o  "pid pgid args" | \grep -E $"[0-9]+ +$pgid +"`; do
+                    flag=0
+                    break
+                done
+                if [ $flag -ne 0 ]; then
+                    break
+                fi
+                sleep .1
+            done
+            #if [ $c -le 0 ]; then
+#                RETVAL=1
+            #fi
+
+        done
+    done
+
+    [ $RETVAL -eq 0 ] && echo_success
+    [ $RETVAL -ne 0 ] && echo_failure
+    echo
+    if [ -e "$HOME/wso2carbon.pid" ]; then
+      rm $HOME/wso2carbon.pid
+    fi
+    return $RETVAL
+}
+
+reload() {
+    stop
+    start
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+    status)
+        status
+        ;;
+
+    start)
+        start
+        ;;
+    
+    stop)
+        stop
+        ;;
+    
+    reload)
+        reload
+        ;;
+    
+    restart)
+        restart
+        ;;
+    
+    *)
+        echo $"Usage: $0 {status|start|stop|reload|restart}"
+        exit 1
+esac
+
+exit $?
