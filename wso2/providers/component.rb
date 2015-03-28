@@ -3,10 +3,11 @@
 # -----------------------------------------------------------------------------
 
 action :install do
+  component = new_resource.name
   download_dir = node['wso2']['download_dir']
   tarball_file = "#{download_dir}/#{::File.basename(new_resource.tarball_url)}"
   install_root = "#{node['wso2']['install_root']}"
-  service_name = "wso2#{new_resource.name}"
+  service_name = "wso2#{component}"
   install_dir = new_resource.install_dir
 
 # Fetch the tarfile remotely if need be
@@ -23,7 +24,18 @@ action :install do
   end
 
 # Create the logs directory
-  directory "#{new_resource.install_dir}/logs"
+  directory "#{install_dir}/logs"
+
+# Update the carbon.xml script
+  template "#{node['wso2'][component]['install_dir']}/repository/conf/carbon.xml" do
+    source "#{component}/carbon-#{node['wso2'][component]['version']}.xml.erb"
+    mode "0755"
+    variables({hostname: "#{component}.wso2.local",
+               script_name: "#{node['wso2'][component]['service_name']}"
+              })
+#    notifies :restart, "service[#{node['wso2']['bam']['service_name']}]"
+  end
+
 
 # Create an init script
   template "/etc/init.d/#{service_name}" do
@@ -35,9 +47,13 @@ action :install do
   end
   
 # Enable the service and configure it to autostart.
-  service "#{service_name}" do
-    action [:start, :enable]
-    supports :restart => true, :reload => true
+
+  log "Service name is #{service_name}"
+  if node['wso2']['auto_start'] then
+    service "#{service_name}" do
+      action [:start, :enable]
+      supports :restart => true, :reload => true
+    end
   end
 
   new_resource.updated_by_last_action(true)

@@ -8,6 +8,9 @@ default['wso2']['download_url_base'] = 'https://github.com/bhazard/chef-cookbook
 default['wso2']['download_dir'] = Chef::Config[:file_cache_path]
 default['wso2']['tarball_extension'] = '.zip'
 default['wso2']['init_script'] = 'bin/wso2server.sh'
+default['wso2']['auto_start'] = false
+default['wso2']['user'] = 'wso2'
+default['wso2']['group'] = 'wso2'
 
 # This will probably vary by OS, but let's default to '/opt' -- (/usr/local is preferred for some)
 default['wso2']['install_root'] = '/opt'
@@ -45,3 +48,5 @@ end
 default['java']['install_flavor'] = 'oracle'
 default['java']['jdk_version'] = '7'
 default['java']['oracle']['accept_oracle_download_terms'] = true
+
+default['wso2']['install_dev_tools'] = false

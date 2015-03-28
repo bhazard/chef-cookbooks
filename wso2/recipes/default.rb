@@ -6,14 +6,5 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-include_recipe 'apt'
-include_recipe 'zip'
-include_recipe 'java'
 
-wso2_component 'wso2bam' do
-  tarball_url node['wso2']['wso2bam_tarball_url']
-  download_dir node['wso2']['download_dir']
-#  src_dir node['wso2']['wso2bam_src_dir']
-  install_dir node['wso2']['wso2bam_install_dir']
-  init_script node['wso2']['init_script']
-end
+include_recipe 'wso2::esb'

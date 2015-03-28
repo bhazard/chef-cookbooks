@@ -22,3 +22,8 @@ end
 %w[apt java zip].each do |dp|
   depends dp
 end
+
+# Development dependencies ... is there a way to have these only for dev envs?
+depends 'vim', '~> 1.1.2'
+depends 'subversion', '~> 1.3.0'
+depends 'maven', '~> 1.3.0'

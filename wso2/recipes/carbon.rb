@@ -6,9 +6,7 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-include_recipe 'apt'
-include_recipe 'zip'
-include_recipe 'java'
+include_recipe 'wso2::common'
 
 wso2_user = 'root'
 wso2_group = 'root'
