@@ -40,6 +40,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node.vm.hostname = "#{component}.#{DOMAIN}"
       node.hostmanager.aliases = %W(#{component} wso2#{component})
       node.vm.network :private_network, ip: "#{SUBNET}.#{10 + index}"
+      node.vm.network :forwarded_port, guest: 9443, host: 9443, auto_correct: false
 
       node.vm.provider :virtualbox do |vb|
         vb.name = node.vm.hostname
@@ -49,21 +50,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node.vm.provision :chef_solo do |chef|
         chef.log_level = :debug if DEBUG
         chef.verbose_logging = DEBUG
-        chef.environments_path = 'environments'
-        chef.environment = 'development'
         chef.file_cache_path = '/vagrant/chef_file_cache'
-        # chef.json = {
-        #   mysql: {
-        #     server_root_password: 'rootpass',
-        #     server_debian_password: 'debpass',
-        #     server_repl_password: 'replpass'
-        #   }
-        # }
+        chef.environments_path = 'environments'
         chef.roles_path = 'roles'
+
+        chef.environment = 'development'
         chef.add_role 'login_server'
-        # chef.run_list = [
-        #   "recipe[wso2::#{component}]"
-        # ]
       end
     end
   end
