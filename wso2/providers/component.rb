@@ -30,7 +30,6 @@ action :install do
 
 # Unzip it into the proper destination location
   execute "unzip -o #{tarball_file} -d #{install_root}" do
-#    command "tar -zxvf #{tarball_file}"
     command "unzip -o #{tarball_file} -d #{install_root}"
     creates "#{install_dir}"
   end
@@ -43,6 +42,23 @@ action :install do
     owner node['wso2']['user']
     group node['wso2']['group']
     mode "0774"
+  end
+
+  # Create an init script
+  template "/etc/init.d/#{service_name}" do
+    source "generic_init_script.erb"
+    mode "0755"
+    variables({install_dir: install_dir,
+               script_name: service_name,
+               service_user: node['wso2']['user'],
+               init_script: new_resource.init_script})
+  end
+  
+# Enable the service and configure it to autostart.
+
+  service "#{service_name}" do
+    action :enable if node['wso2']['auto_start']
+    supports :restart => true, :status => true
   end
 
   CONFIG_FILES = { 'is-5.0.0' => %w{ conf/carbon.xml conf/tomcat/catalina-server.xml 
@@ -67,29 +83,16 @@ action :install do
                  session_timeout: node['wso2']['session_timeout'],
                  script_name: node['wso2']["#{component}"]['service_name']
       })
-#    notifies :restart, "service[#{service_name}]", :delayed
+      notifies :restart, "service[#{service_name}]", :delayed if node['wso2']['auto_start']
     end
   end
-
-  
-# Create an init script
-  template "/etc/init.d/#{service_name}" do
-    source "generic_init_script.erb"
-    mode "0755"
-    variables({install_dir: install_dir,
-               script_name: service_name,
-               service_user: node['wso2']['user'],
-               init_script: new_resource.init_script})
-  end
-  
-# Enable the service and configure it to autostart.
 
   if node['wso2']['auto_start'] then
     service "#{service_name}" do
-      action [:start, :enable]
-      supports :restart => true, :reload => true
+      action :start
     end
   end
+
 
   new_resource.updated_by_last_action(true)
 end

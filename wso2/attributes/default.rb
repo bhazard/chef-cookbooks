@@ -20,8 +20,11 @@ default['wso2']['admin_password'] = 'admin'
 # Versions of each component -- these must match the files in the download 
 # location, and must be compatible with each other.
 default['wso2']['carbon']['version'] = '4.2.0'
+
+default['wso2']['am']['version'] = '1.8.0'
 default['wso2']['as']['version'] = '5.2.1'
 default['wso2']['bam']['version'] = '2.5.0'
+default['wso2']['bps']['version'] = '3.2.0'
 default['wso2']['emm']['version'] = '1.1.0'
 default['wso2']['esb']['version'] = '4.8.1'
 default['wso2']['is']['version'] = '5.0.0'
@@ -41,7 +44,6 @@ default['wso2']['download_url_base'] = 'https://github.com/bhazard/chef-cookbook
 # Downloaded files go here.  This should be *outside* of the VM, but available
 # from within the VM.  So /vagrant/x is a good choice.
 default['wso2']['download_dir'] = Chef::Config[:file_cache_path]
-default['wso2']['tarball_extension'] = '.zip'
 default['wso2']['init_script'] = 'bin/wso2server.sh'
 default['wso2']['auto_start'] = true
 default['wso2']['session_timeout'] = 30 # Tomcat session timeout, in minutes.
@@ -51,7 +53,7 @@ default['swap_tuning']['minimum_size'] = 1024  # Minimum swap file size, in MB
 default['wso2']['install_root'] = '/opt'
 
 %w(carbon as bam emm esb greg is ues).each do |component|
-  default['wso2']["#{component}"]['tarball_url'] = "#{node['wso2']['download_url_base']}/wso2#{component}-#{node['wso2'][component]['version']}#{node['wso2']['tarball_extension']}"
+  default['wso2']["#{component}"]['tarball_url'] = "#{node['wso2']['download_url_base']}/wso2#{component}-#{node['wso2'][component]['version']}.zip"
   default['wso2']["#{component}"]['install_dir'] = "#{node['wso2']['install_root']}/wso2#{component}-#{node['wso2'][component]['version']}"
   default['wso2']["#{component}"]['service_name'] = "wos2#{component}"
 end
