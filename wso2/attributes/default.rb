@@ -5,6 +5,7 @@
 # Parameters that users of this cookbook might want to override
 # -----------------------------------------------------------------------------
 
+default['wso2']['hostname'] = 'localhost'
 default['wso2']['login_server'] = 'localhost'
 default['wso2']['kerberos_server'] = 'localhost'
 
@@ -57,7 +58,6 @@ default['wso2']['install_root'] = '/opt'
   default['wso2']["#{component}"]['tarball_url'] = "#{node['wso2']['download_url_base']}/wso2#{component}-#{node['wso2'][component]['version']}#{node['wso2']['tarball_extension']}"
   default['wso2']["#{component}"]['install_dir'] = "#{node['wso2']['install_root']}/wso2#{component}-#{node['wso2'][component]['version']}"
   default['wso2']["#{component}"]['service_name'] = "wos2#{component}"
-  default['wso2']["#{component}"]['hostname'] = "wos2#{component}"
 end
 
 # Turing repository URL: http://dist.wso2.org/p2/carbon/releases/turing/

@@ -19,11 +19,16 @@ For more information about the various WSO2 components, see the [WSO2 Website](h
 The cookbook is in the middle of a major update.  The core modules will install,
 however many depend on being accessible via localhost in their default config.
 
+* Replace default keystore (see log WARN)
+* Increase default swap memory (see log WARN)
+* Add cert for proper SSL support
 * Add support for production database
-* Set hostname properly throughout config files (now use "localhost")
+* Set hostname properly throughout config files (currently, can only use "localhost")
 * Include version-specific config files for each product
 * Parameterize user and group under which the WSO2 service runs
 * Parameterize default admin account and password
+* Allow IS portal and dashboard to work when not accessed via localhost
+* IS dashboard/portal issue with back to login screen gens "something went wrong during auth process"
 
 ## Supported Platforms
 

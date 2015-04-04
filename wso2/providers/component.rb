@@ -57,7 +57,7 @@ action :install do
       owner node['wso2']['user']
       group node['wso2']['group']
       mode "0664"
-      variables({hostname: node['wso2']["#{component}"]['hostname'],
+      variables({hostname: node['wso2']['hostname'],
                  login_server: node['wso2']['login_server'],
                  admin_user: node['wso2']['admin_user'],
                  admin_password: node['wso2']['admin_password'],

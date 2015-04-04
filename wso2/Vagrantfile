@@ -46,8 +46,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node.vm.hostname = "#{component}.#{DOMAIN}"
       node.hostmanager.aliases = %W(#{component} wso2#{component}) if Vagrant.has_plugin?('vagrant-hostmanager')
       node.vm.network :private_network, ip: "#{SUBNET}.#{10 + index}"
-      node.vm.network :forwarded_port, guest: 9443, host: 9443, auto_correct: false
-      node.vm.network :forwarded_port, guest: 9763, host: 9763, auto_correct: false
+      node.vm.network :forwarded_port, guest: 9443, host: 9443, auto_correct: false    # Carbon
+      node.vm.network :forwarded_port, guest: 9763, host: 9763, auto_correct: false    # Servlets
+      node.vm.network :forwarded_port, guest: 10389, host: 10389, auto_correct: false  # LDAP
 
       node.vm.provider :virtualbox do |vb|
         vb.name = node.vm.hostname
@@ -65,12 +66,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         chef.roles_path = 'roles'
         chef.add_role 'login_server'
 
-        chef.json = {
-          wso2: {
-            hostname: node.vm.hostname,
-            login_server: 'localhost'
-          }
-        }
+        # chef.json = {
+        #   wso2: {
+        #     hostname: node.vm.hostname,
+        #     login_server: node.vm.hostname
+        #   }
+        # }
       end
     end
   end
