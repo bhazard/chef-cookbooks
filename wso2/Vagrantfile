@@ -61,7 +61,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         chef.file_cache_path = '/vagrant/chef_file_cache'
 
         chef.environments_path = 'environments'
-        chef.environment = 'development'
+        chef.environment = 'chef-development'
 
         chef.roles_path = 'roles'
         chef.add_role 'login_server'

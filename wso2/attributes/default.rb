@@ -50,6 +50,7 @@ default['wso2']['tarball_extension'] = '.zip'
 default['wso2']['init_script'] = 'bin/wso2server.sh'
 default['wso2']['auto_start'] = true
 default['wso2']['session_timeout'] = 30 # Tomcat session timeout, in minutes.
+default['swap_tuning']['minimum_size'] = 1024  # Minimum swap file size, in MB
 
 # This will vary by OS, but let's default to '/opt'
 default['wso2']['install_root'] = '/opt'

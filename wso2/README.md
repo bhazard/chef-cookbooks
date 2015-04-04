@@ -21,6 +21,7 @@ however many depend on being accessible via localhost in their default config.
 
 * Replace default keystore (see log WARN)
 * Increase default swap memory (see log WARN)
+* Fix 'stdin: is not a tty' error in console and in wso2/logs/wso2.err
 * Add cert for proper SSL support
 * Add support for production database
 * Set hostname properly throughout config files (currently, can only use "localhost")
