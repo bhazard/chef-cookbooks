@@ -18,6 +18,7 @@ action :install do
 
   user node['wso2']['user'] do
     action :create
+    home install_dir
     gid "#{node['wso2']['group']}"
   end
 
@@ -34,7 +35,7 @@ action :install do
     creates "#{install_dir}"
   end
 
-  execute "chown -R #{node['wso2']['user']}:#{node['wso2']['user']} #{install_dir}" do
+  execute "chown -R #{node['wso2']['user']}:#{node['wso2']['group']} #{install_dir}" do
   end
 
 # Create the logs directory

@@ -69,6 +69,7 @@ status() {
   if [ -f "$PIDFILE" ]; then
     if [ -z "`ps axf | grep $PID | grep -v grep`" ]; then
       echo "Process dead but pidfile exists"
+      RETVAL=1
     else
       echo "Running"
     fi
@@ -86,7 +87,7 @@ start() {
     ulimit -c unlimited
     echo -n $"Starting $PROG: "
     cd $HOME
-    nohup su - $USER -c "$HOME/<%=@init_script%>" >> ./logs/<%=@script_name%>.out 2>> ./logs/<%=@script_name%>.err < /dev/null &
+    su - $USER -c "nohup $HOME/<%=@init_script%> >> ./logs/<%=@script_name%>.out 2>> ./logs/<%=@script_name%>.err" &
     RETVAL=$?
     [ $RETVAL -eq 0 ] && echo_success
     [ $RETVAL -ne 0 ] && echo_failure

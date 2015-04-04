@@ -9,14 +9,9 @@ default['wso2']['hostname'] = 'localhost'
 default['wso2']['login_server'] = 'localhost'
 default['wso2']['kerberos_server'] = 'localhost'
 
-# User and group under which the service runs.  Any value other than root has
-# a couple of bugs:
-# Bug 1: There is a bug where the jdk attempts to write a file somewhere and can't
-#   get a lock on it.  This tosses an exception in logs/wso2is.err
-# Bug 2: The files in logs/ are owned by root:root regardless of the fact that
-#   the service is started as user.
-default['wso2']['user'] = 'root'
-default['wso2']['group'] = 'root'
+# User and group under which the service runs.  
+default['wso2']['user'] = 'wso2user'
+default['wso2']['group'] = 'wso2group'
 
 # Default loginid and pwd for the Carbon admin account
 default['wso2']['admin_user'] = 'admin'

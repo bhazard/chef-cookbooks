@@ -25,10 +25,10 @@ however many depend on being accessible via localhost in their default config.
 * Add support for production database
 * Set hostname properly throughout config files (currently, can only use "localhost")
 * Include version-specific config files for each product
-* Parameterize user and group under which the WSO2 service runs
 * Parameterize default admin account and password
 * Allow IS portal and dashboard to work when not accessed via localhost
 * IS dashboard/portal issue with back to login screen gens "something went wrong during auth process"
+* Ensure that logs are rotated / managed
 
 ## Supported Platforms
 
