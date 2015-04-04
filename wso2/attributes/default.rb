@@ -10,8 +10,8 @@ default['wso2']['login_server'] = 'localhost'
 default['wso2']['kerberos_server'] = 'localhost'
 
 # User and group under which the service runs.  
-default['wso2']['user'] = 'wso2user'
-default['wso2']['group'] = 'wso2group'
+default['wso2']['user'] = 'wso2'
+default['wso2']['group'] = 'wso2'
 
 # Default loginid and pwd for the Carbon admin account
 default['wso2']['admin_user'] = 'admin'
