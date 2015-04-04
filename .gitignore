@@ -9,3 +9,4 @@ bin/*
 .kitchen.local.yml
 
 chef_file_cache
+is-5.0.0

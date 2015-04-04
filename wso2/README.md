@@ -16,11 +16,12 @@ For more information about the various WSO2 components, see the [WSO2 Website](h
 
 ## To-dos
 
+The cookbook is in the middle of a major update.  The core modules will install,
+however many depend on being accessible via localhost in their default config.
+
 * Add support for production database
-* Add chef roles support, particularly for "development"
 * Set hostname properly throughout config files (now use "localhost")
 * Include version-specific config files for each product
-    * Done for is
 * Parameterize user and group under which the WSO2 service runs
 * Parameterize default admin account and password
 
@@ -29,6 +30,8 @@ For more information about the various WSO2 components, see the [WSO2 Website](h
 Built and tested on Ubuntu 14.04.
 
 ## Attributes
+
+This list is incomplete.  See attributes/default.rb for details.
 
 <table>
   <tr>

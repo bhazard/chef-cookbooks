@@ -17,14 +17,20 @@ SUBNET = '192.168.6'
 DEBUG = false   # Set to true for verbose provisioner output
 MEMORY = '4096'
 
-WSO2_COMPONENTS = %w(carbon as bam emm esb is)
+# Partway through major revamp -- only IS works right now
+#WSO2_COMPONENTS = %w(carbon as bam emm esb is)
+WSO2_COMPONENTS = %w(is)
 
 Vagrant.require_version '>= 1.6.5'
 VAGRANTFILE_API_VERSION = '2'
 
+if !Vagrant.has_plugin?('vagrant-berkshelf')
+  p "The vagrant-berkshelf plugin is required. Please run \'vagrant plugin install vagrant-berkshelf\'"
+  exit
+end
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.cache.auto_detect = true if Vagrant.has_plugin?('vagrant-cachier')
-#  config.omnibus.chef_version = 'latest' if Vagrant.has_plugin?('vagrant-omnibus')
   config.berkshelf.enabled = true
 
   if Vagrant.has_plugin?('vagrant-hostmanager')
@@ -38,9 +44,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   WSO2_COMPONENTS.each_with_index do |component, index|
     config.vm.define component do |node|
       node.vm.hostname = "#{component}.#{DOMAIN}"
-      node.hostmanager.aliases = %W(#{component} wso2#{component})
+      node.hostmanager.aliases = %W(#{component} wso2#{component}) if Vagrant.has_plugin?('vagrant-hostmanager')
       node.vm.network :private_network, ip: "#{SUBNET}.#{10 + index}"
       node.vm.network :forwarded_port, guest: 9443, host: 9443, auto_correct: false
+      node.vm.network :forwarded_port, guest: 9763, host: 9763, auto_correct: false
 
       node.vm.provider :virtualbox do |vb|
         vb.name = node.vm.hostname
@@ -51,11 +58,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         chef.log_level = :debug if DEBUG
         chef.verbose_logging = DEBUG
         chef.file_cache_path = '/vagrant/chef_file_cache'
-        chef.environments_path = 'environments'
-        chef.roles_path = 'roles'
 
+        chef.environments_path = 'environments'
         chef.environment = 'development'
+
+        chef.roles_path = 'roles'
         chef.add_role 'login_server'
+
+        chef.json = {
+          wso2: {
+            hostname: node.vm.hostname,
+            login_server: 'localhost'
+          }
+        }
       end
     end
   end

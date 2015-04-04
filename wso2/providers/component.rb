@@ -6,9 +6,20 @@ action :install do
   component = new_resource.name
   download_dir = node['wso2']['download_dir']
   tarball_file = "#{download_dir}/#{::File.basename(new_resource.tarball_url)}"
-  install_root = "#{node['wso2']['install_root']}"
+  install_root = node['wso2']['install_root']
   service_name = "wso2#{component}"
   install_dir = new_resource.install_dir
+
+# Create the group and user that the service will run as.  The install_dir
+# files should be owned by this user and group.
+  group node['wso2']['group'] do
+    action :create
+  end
+
+  user node['wso2']['user'] do
+    action :create
+    gid "#{node['wso2']['group']}"
+  end
 
 # Fetch the tarfile remotely if need be
   remote_file tarball_file do
@@ -23,13 +34,21 @@ action :install do
     creates "#{install_dir}"
   end
 
-# Create the logs directory
-  directory "#{install_dir}/logs"
+  execute "chown -R #{node['wso2']['user']}:#{node['wso2']['user']} #{install_dir}" do
+  end
 
-  CONFIG_FILES['is-5.0.0'] = %w{ conf/carbon.xml conf/tomcat/catalina-server.xml 
-    conf/tomcat/carbon/WEB-INF/web.xml conf/security/sso-idp-config.xml
-    conf/identity.xml conf/provisioning-config.xml conf/embedded-ldap.xml 
-    conf/security/authenticators.xml 
+# Create the logs directory
+  directory "#{install_dir}/logs" do
+    owner node['wso2']['user']
+    group node['wso2']['group']
+    mode "0774"
+  end
+
+  CONFIG_FILES = { 'is-5.0.0' => %w{ conf/carbon.xml conf/tomcat/catalina-server.xml 
+      conf/tomcat/carbon/WEB-INF/web.xml conf/security/sso-idp-config.xml
+      conf/identity.xml conf/provisioning-config.xml conf/embedded-ldap.xml 
+      conf/security/authenticators.xml 
+    }
   }
 
   CONFIG_FILES["#{component}-#{node['wso2'][component]['version']}"].each do |cf|
@@ -38,57 +57,18 @@ action :install do
       owner node['wso2']['user']
       group node['wso2']['group']
       mode "0664"
-      variables({hostname: "#{component}.wso2.local",
-                 login_server: "#{component}.wso2.local",
+      variables({hostname: node['wso2']["#{component}"]['hostname'],
+                 login_server: node['wso2']['login_server'],
                  admin_user: node['wso2']['admin_user'],
                  admin_password: node['wso2']['admin_password'],
                  kerberos_enabled: false,
-                 kerberos_server: "#{component}.wso2.local",
-                 session_timeout: "#{node['wso2']['session_timeout']}",
-                 service_user: "#{node['wso2']['user']}",
-                 service_group: "#{node['wso2']['group']}",
-                 script_name: "#{node['wso2'][component]['service_name']}"
+                 kerberos_server: node['wso2']['kerberos_server'],
+                 session_timeout: node['wso2']['session_timeout'],
+                 script_name: node['wso2']["#{component}"]['service_name']
       })
-#    notifies :restart, "service[#{service_name}]"
+#    notifies :restart, "service[#{service_name}]", :delayed
     end
   end
-
-# # Update the carbon.xml file
-#   template "#{install_dir}/repository/conf/carbon.xml" do
-#     source "#{component}-#{node['wso2'][component]['version']}/conf/carbon.xml.erb"
-#     mode "0755"
-#     variables({hostname: "#{component}.wso2.local",
-#                script_name: "#{node['wso2'][component]['service_name']}"
-#               })
-# #    notifies :restart, "service[#{node['wso2']['bam']['service_name']}]"
-#   end
-
-# # Update the catalina-server.xml file
-#   template "#{install_dir}/repository/conf/tomcat/catalina-server.xml" do
-#     source "#{component}-#{node['wso2'][component]['version']}/conf/tomcat/catalina-server.xml.erb"
-#     mode "0755"
-#     variables({hostname: "#{component}.wso2.local"
-#               })
-# #    notifies :restart, "service[#{node['wso2']['bam']['service_name']}]"
-#   end
-
-# # Update the web.xml file
-#   template "#{install_dir}/repository/conf/tomcat/carbon/WEB-INF/web.xml" do
-#     source "#{component}-#{node['wso2'][component]['version']}/conf/tomcat/carbon/WEB-INF/web.xml.erb"
-#     mode "0755"
-#     variables({session_timeout: "#{node['wso2']['session_timeout']}"
-#               })
-# #    notifies :restart, "service[#{node['wso2']['bam']['service_name']}]"
-#   end
-
-# # Update the sso.xml file
-#   template "#{install_dir}/repository/conf/security/sso-idp-config.xml" do
-#     source "#{component}-#{node['wso2'][component]['version']}/conf/security/sso-idp-config.xml.erb"
-#     mode "0755"
-#     variables({hostname: "#{component}.wso2.local"
-#               })
-# #    notifies :restart, "service[#{node['wso2']['bam']['service_name']}]"
-#   end
 
   
 # Create an init script
@@ -96,7 +76,8 @@ action :install do
     source "generic_init_script.erb"
     mode "0755"
     variables({install_dir: install_dir,
-               script_name: "#{service_name}",
+               script_name: service_name,
+               service_user: node['wso2']['user'],
                init_script: new_resource.init_script})
   end
   

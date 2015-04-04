@@ -7,7 +7,7 @@
 
 HOME=<%=@install_dir%>
 PIDFILE=$HOME/wso2carbon.pid
-USER=root
+USER=<%=@service_user%>
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
 
@@ -79,7 +79,6 @@ status() {
 
   return $RETVAL
 }
-
 
 start() {
     ulimit -n 65536
