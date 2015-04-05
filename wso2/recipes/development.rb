@@ -2,4 +2,9 @@
 # ------------------------------------------------------------------------------
 
 include_recipe 'vim'
-include_recipe 'subversion::client'
+
+# The following are used to build and install samples.  Different components
+# may use one or more of these, depending on the component.
+#include_recipe 'subversion::client'
+# include_recipe 'maven'
+# include_recipe 'ant'

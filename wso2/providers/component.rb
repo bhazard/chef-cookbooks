@@ -61,30 +61,41 @@ action :install do
     supports :restart => true, :status => true
   end
 
-  CONFIG_FILES = { 'is-5.0.0' => %w{ conf/carbon.xml conf/tomcat/catalina-server.xml 
+  CONFIG_FILES = { 
+    'is-5.0.0' => %w{ conf/carbon.xml conf/tomcat/catalina-server.xml 
       conf/tomcat/carbon/WEB-INF/web.xml conf/security/sso-idp-config.xml
       conf/identity.xml conf/provisioning-config.xml conf/embedded-ldap.xml 
-      conf/security/authenticators.xml 
-    }
+      conf/security/authenticators.xml },
+    'am-1.8.0' => %w{ conf/carbon.xml conf/tomcat/catalina-server.xml 
+      conf/tomcat/carbon/WEB-INF/web.xml conf/identity.xml },
+    'bam-2.5.0' => %w{ conf/carbon.xml conf/tomcat/catalina-server.xml 
+      conf/tomcat/carbon/WEB-INF/web.xml conf/identity.xml }
   }
 
-  CONFIG_FILES["#{component}-#{node['wso2'][component]['version']}"].each do |cf|
-    template "#{install_dir}/repository/#{cf}" do
-      source "#{component}-#{node['wso2'][component]['version']}/#{cf}.erb"
-      owner node['wso2']['user']
-      group node['wso2']['group']
-      mode "0664"
-      variables({hostname: node['wso2']['hostname'],
-                 login_server: node['wso2']['login_server'],
-                 admin_user: node['wso2']['admin_user'],
-                 admin_password: node['wso2']['admin_password'],
-                 kerberos_enabled: false,
-                 kerberos_server: node['wso2']['kerberos_server'],
-                 session_timeout: node['wso2']['session_timeout'],
-                 script_name: node['wso2']["#{component}"]['service_name']
-      })
-      notifies :restart, "service[#{service_name}]", :delayed if node['wso2']['auto_start']
+  if !CONFIG_FILES["#{component}-#{node['wso2'][component]['version']}"].nil? then
+
+    CONFIG_FILES["#{component}-#{node['wso2'][component]['version']}"].each do |cf|
+      template "#{install_dir}/repository/#{cf}" do
+        source "#{component}-#{node['wso2'][component]['version']}/#{cf}.erb"
+        owner node['wso2']['user']
+        group node['wso2']['group']
+        mode "0664"
+        variables({hostname: node['wso2']['hostname'],
+                   login_server: node['wso2']['login_server'],
+                   admin_user: node['wso2']['admin_user'],
+                   admin_password: node['wso2']['admin_password'],
+                   kerberos_enabled: false,
+                   kerberos_server: node['wso2']['kerberos_server'],
+                   bam_server: node['wso2']['bam_server'],
+                   session_timeout: node['wso2']['session_timeout'],
+                   script_name: node['wso2']["#{component}"]['service_name']
+        })
+        notifies :restart, "service[#{service_name}]", :delayed if node['wso2']['auto_start']
+      end
     end
+
+  else
+    Chef::Log.warn "CONFIG_FILES is empty for #{component}"
   end
 
   if node['wso2']['auto_start'] then

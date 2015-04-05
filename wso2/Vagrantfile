@@ -15,11 +15,11 @@
 DOMAIN = 'wso2.local'
 SUBNET = '192.168.6'
 DEBUG = false   # Set to true for verbose provisioner output
-MEMORY = '4096'
+MEMORY = '3072'
 
 # Partway through major revamp -- only IS works right now
 #WSO2_COMPONENTS = %w(carbon as bam emm esb is)
-WSO2_COMPONENTS = %w(is)
+WSO2_COMPONENTS = %w(is bam am)
 
 Vagrant.require_version '>= 1.6.5'
 VAGRANTFILE_API_VERSION = '2'
@@ -46,9 +46,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node.vm.hostname = "#{component}.#{DOMAIN}"
       node.hostmanager.aliases = %W(#{component} wso2#{component}) if Vagrant.has_plugin?('vagrant-hostmanager')
       node.vm.network :private_network, ip: "#{SUBNET}.#{10 + index}"
-      node.vm.network :forwarded_port, guest: 9443, host: 9443, auto_correct: false    # Carbon
-      node.vm.network :forwarded_port, guest: 9763, host: 9763, auto_correct: false    # Servlets
-      node.vm.network :forwarded_port, guest: 10389, host: 10389, auto_correct: false  # LDAP
+      node.vm.network :forwarded_port, guest: 9443, host: 9443, auto_correct: true    # Carbon
+      node.vm.network :forwarded_port, guest: 9763, host: 9763, auto_correct: true    # Servlets
+      node.vm.network :forwarded_port, guest: 10389, host: 10389, auto_correct: false  if component == 'is'
 
       node.vm.provider :virtualbox do |vb|
         vb.name = node.vm.hostname
@@ -64,14 +64,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         chef.environment = 'chef-development'
 
         chef.roles_path = 'roles'
-        chef.add_role 'login_server'
+        chef.add_role "wso2#{component}"
 
-        # chef.json = {
-        #   wso2: {
-        #     hostname: node.vm.hostname,
-        #     login_server: node.vm.hostname
-        #   }
-        # }
+        chef.json = {
+          wso2: {
+            hostname: node.vm.hostname,
+            login_server: "is.#{DOMAIN}",
+            bam_server: "bam.#{DOMAIN}"
+          }
+        }
       end
     end
   end

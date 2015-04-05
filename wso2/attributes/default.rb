@@ -8,6 +8,7 @@
 default['wso2']['hostname'] = 'localhost'
 default['wso2']['login_server'] = 'localhost'
 default['wso2']['kerberos_server'] = 'localhost'
+default['wso2']['bam_server'] = 'localhost'
 
 # User and group under which the service runs.  
 default['wso2']['user'] = 'wso2'
@@ -52,7 +53,7 @@ default['swap_tuning']['minimum_size'] = 1024  # Minimum swap file size, in MB
 # This will vary by OS, but let's default to '/opt'
 default['wso2']['install_root'] = '/opt'
 
-%w(carbon as bam emm esb greg is ues).each do |component|
+%w(carbon am as bam emm esb greg is ues).each do |component|
   default['wso2']["#{component}"]['tarball_url'] = "#{node['wso2']['download_url_base']}/wso2#{component}-#{node['wso2'][component]['version']}.zip"
   default['wso2']["#{component}"]['install_dir'] = "#{node['wso2']['install_root']}/wso2#{component}-#{node['wso2'][component]['version']}"
   default['wso2']["#{component}"]['service_name'] = "wos2#{component}"

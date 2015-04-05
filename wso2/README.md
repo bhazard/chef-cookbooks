@@ -2,8 +2,10 @@
 
 This cookbook provides recipes to install the following WSO2 modules:
 
+* WSO2 API Manager (am)
 * WSO2 Application Server (as)
 * WSO2 Business Activity Monitor (bam)
+* WSO2 Carbon core (carbon)
 * WSO2 Enterprise Mobility Manager (emm)
 * WSO2 Enterprise Service Bus (esb)
 * WSO2 Identity Server (is)
@@ -12,27 +14,38 @@ The project includes a `Vagrantfile` that may be used for creating test instance
 for each of these components.  This facilitates recipe testing, but is also
 useful for playing with the various WSO2 components.
 
+Note that these recipes work by downloading and unzipping each component.  While
+it is feasible to install multiple components on the same server, there will be
+configuration conflicts.  With WSO2 components, there would typically be only
+a single Carbon server, and components would be configured to use that server.
+This might be done by installing features into a single tomcat instance, or by
+making configuration changes to support multiple TC instances.  This cookbook
+does not account for these scenarios, but might be used as a "starting point"
+for implementation.
+
 For more information about the various WSO2 components, see the [WSO2 Website](http://wso2.com/products/).
 
 ## To-dos
 
-The cookbook is in the middle of a major update.  The core modules will install,
-however many depend on being accessible via localhost in their default config.
+The cookbook is in the middle of a major update (April 2015).  The core modules 
+will install, however many depend on being accessible via localhost in their default config.
 
 * Replace default keystore (see log WARN)
 * Fix 'stdin: is not a tty' error in console and in wso2/logs/wso2.err
 * Add cert for proper SSL support
 * Add support for production database
-* Set hostname properly throughout config files (currently, can only use "localhost")
-* Include version-specific config files for each product
 * Parameterize default admin account and password
+* Provide configuration option for separate IS server
+* Provide configuration option for separate BAM server
+* BAM throws log4j appender error in logs/wso2bam.err (WSO2 BUG?)
 * Allow IS portal and dashboard to work when not accessed via localhost
 * IS dashboard/portal issue with back to login screen gens "something went wrong during auth process"
 * Ensure that logs are rotated / managed
+* Configure email for password changes, etc
 
 ## Supported Platforms
 
-Built and tested on Ubuntu 14.04.
+Built and tested on Ubuntu 14.04 only.
 
 ## Attributes
 
@@ -73,9 +86,11 @@ This list is incomplete.  See attributes/default.rb for details.
 
 ## Usage
 
-### Use the wso2::component-name Chef Recipe
+### Use the wso2::component-name Chef Recipe or Role
 
-To install the component using Chef, include `wso2::component-name` in your 
+To install the component using a Chef `run-list`, 
+include `recipe[wso2::component-name]` 
+or alternatively, `role[wso2component-name]` in your 
 node's `run_list`.  For example, the following will install the Business 
 Activity Monitor ("bam"):
 
@@ -86,8 +101,24 @@ Activity Monitor ("bam"):
   ]
 }
 ```
+or use the equivallent role:
 
-This recipe will also install the Oracle JDK.
+```json
+{
+  "run_list": [
+    "role[wso2bam]"
+  ]
+}
+```
+
+### Environments
+
+The recipes support a default environment as well as a `development` and a
+`chef-development` environment.  Both of these will install tools to allow
+the WSO2 samples to be installed and run (e.g., `subversion` and `maven`).  The
+`chef-development` environment is also configured to not start the service to
+facilitate reviewing the unzipped directories before the server starts for the
+first time.
 
 ### Testing with Vagrant
 
@@ -110,14 +141,16 @@ vagrant up esb
 will start an instance of the Enterprise Service Bus.
 
 The Vagrantfile uses the excellent 
-[hostmanager plugin](https://github.com/smdahlen/vagrant-hostmanager) to 
+[hostmanager plugin](https://github.com/smdahlen/vagrant-hostmanager) (if it
+is installed) to 
 update your hosts file on both the host and guest.  To access a running vm, 
 you can point your browser to `https://component:9443/carbon`.  For example, the 
 esb host started above would be found at
 https://esb:9443/carbon.  Note that by default, the WSO2 components respond only
 on https.
 
-To login to a new component, use the carbon default uid and pwd (`admin`/`admin`).
+To login to a new component, use the carbon default uid and pwd (`admin`/`admin`),
+or override the cooresponding attributes.
 
 ### WSO2 Download Files
 
