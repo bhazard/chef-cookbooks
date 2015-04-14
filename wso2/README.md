@@ -30,7 +30,7 @@ For more information about the various WSO2 components, see the [WSO2 Website](h
 The cookbook is in the middle of a major update (April 2015).  The core modules 
 will install, however many depend on being accessible via localhost in their default config.
 
-* Replace default keystore (see log WARN)
+* Replace default keystore cert (see log WARN and this [WSO2 KB article](http://wso2.com/library/knowledge-base/2011/08/adding-ca-certificate-authority-signed-certificate-wso2-products/)).
 * Fix 'stdin: is not a tty' error in console and in wso2/logs/wso2.err
 * Add cert for proper SSL support
 * Add support for production database
