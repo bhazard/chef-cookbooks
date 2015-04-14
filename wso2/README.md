@@ -77,6 +77,12 @@ This list is incomplete.  See attributes/default.rb for details.
     <td><tt></tt></td>
   </tr>
   <tr>
+    <td><tt>['wso2']['install_java']</tt></td>
+    <td>boolean</td>
+    <td>Installs a JDK if true.</td>
+    <td><tt>true</tt></td>
+  </tr>
+  <tr>
     <td><tt>['java']['jdk_version']</tt></td>
     <td>string</td>
     <td>Determines which version of the Oracle JDK to install.</td>

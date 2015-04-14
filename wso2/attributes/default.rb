@@ -71,6 +71,7 @@ end
 # Here, we configure the recipe to install JDK version 7.  As of this writing 
 # (March 2015), version 6 is supported but at least some components complain 
 # if you try to use 8.
+default['wso2']['install_java'] = true
 default['java']['install_flavor'] = 'oracle'
 default['java']['jdk_version'] = '7'
 default['java']['oracle']['accept_oracle_download_terms'] = true
