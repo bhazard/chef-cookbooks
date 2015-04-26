@@ -1,0 +1,7 @@
+name             'vector'
+maintainer       'YOUR_NAME'
+maintainer_email 'YOUR_EMAIL'
+license          'All rights reserved'
+description      'Installs/Configures vector'
+long_description 'Installs/Configures vector'
+version          '0.1.0'
