@@ -1,10 +1,11 @@
-# logstash2-cookbook
+# log-monitor chef cookbook
 
-TODO: Enter the cookbook description here.
+This chef cookbook provides recipes for creating centralized logging servers
+based on elasticsearch, logstash and kibana.  
 
 ## Supported Platforms
 
-TODO: List your supported platforms.
+Only tested on ubuntu 14.04 so far.
 
 ## Attributes
 
@@ -16,7 +17,7 @@ TODO: List your supported platforms.
     <th>Default</th>
   </tr>
   <tr>
-    <td><tt>['logstash2']['bacon']</tt></td>
+    <td><tt>['logstash']['bacon']</tt></td>
     <td>Boolean</td>
     <td>whether to include bacon</td>
     <td><tt>true</tt></td>
@@ -25,18 +26,19 @@ TODO: List your supported platforms.
 
 ## Usage
 
-### logstash2::default
+### logstash::default
 
-Include `logstash2` in your node's `run_list`:
+Include `log-monitor::kibana` in your node's `run_list`:
 
 ```json
 {
   "run_list": [
-    "recipe[logstash2::default]"
+    "recipe[logstash::elasticsearch]",
+    "recipe[logstash::kibana]"
   ]
 }
 ```
 
 ## License and Authors
 
-Author:: YOUR_NAME (<YOUR_EMAIL>)
+Author:: Bill Hazard (bhazard)
