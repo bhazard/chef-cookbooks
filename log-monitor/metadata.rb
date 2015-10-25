@@ -12,4 +12,5 @@ end
 
 depends 'apt'
 depends 'java'
+depends 'vim'
 depends 'nginx'

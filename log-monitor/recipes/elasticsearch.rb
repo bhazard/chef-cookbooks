@@ -5,10 +5,9 @@
 # Copyright (C) 2015 YOUR_NAME
 #
 # All rights reserved - Do Not Redistribute
-#
-include_recipe 'apt'
-#include_recipe 'zip'
-include_recipe 'java' if node['log-monitor']['install_java']
+# ------------------------------------------------------------------------------
+
+include_recipe 'log-monitor::common'
 
 apt_repository 'elasticache' do
   uri        'http://packages.elastic.co/elasticsearch/1.7/debian'

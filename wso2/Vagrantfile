@@ -6,7 +6,12 @@
 #   https://VM_IP:9443
 #     default login creds are admin/admin
 #
-# CARBON_PORT is 9443+index ... 9443 for esb, 9444 for is, etc.
+# CARBON_PORT is 9443+cindex ... 9443 for esb, 9444 for is, etc.
+
+# Vagrant Plugins
+#   vagrant-berkshelf - required - manages chef dependencies
+#   vagrant-cachier - optional - optimizes vbox downloads
+#   vagrant-hostmanager - optional - manages host and guest hostfiles
 
 # ----------------------------------------------------------------------------
 # Things that might need tweaking for your world
@@ -17,7 +22,7 @@ SUBNET = '192.168.6'
 DEBUG = false   # Set to true for verbose provisioner output
 MEMORY = '3072'
 
-# Partway through major revamp -- only IS works right now
+# Partway through major revamp -- only the components in this list work right now
 #WSO2_COMPONENTS = %w(carbon as bam emm esb is)
 WSO2_COMPONENTS = %w(is bam am)
 
@@ -41,11 +46,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = 'chef/ubuntu-14.04'
 
-  WSO2_COMPONENTS.each_with_index do |component, index|
+  WSO2_COMPONENTS.each_with_index do |component, cindex|
     config.vm.define component do |node|
       node.vm.hostname = "#{component}.#{DOMAIN}"
       node.hostmanager.aliases = %W(#{component} wso2#{component}) if Vagrant.has_plugin?('vagrant-hostmanager')
-      node.vm.network :private_network, ip: "#{SUBNET}.#{10 + index}"
+      node.vm.network :private_network, ip: "#{SUBNET}.#{10 + cindex}"
       node.vm.network :forwarded_port, guest: 9443, host: 9443, auto_correct: true    # Carbon
       node.vm.network :forwarded_port, guest: 9763, host: 9763, auto_correct: true    # Servlets
       node.vm.network :forwarded_port, guest: 10389, host: 10389, auto_correct: false  if component == 'is'
@@ -69,6 +74,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         chef.json = {
           wso2: {
             hostname: node.vm.hostname,
+            auto_start: true,
+            mgthostname: node.vm.hostname,
             login_server: "is.#{DOMAIN}",
             bam_server: "bam.#{DOMAIN}"
           }

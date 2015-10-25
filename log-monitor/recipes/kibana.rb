@@ -1,13 +1,15 @@
 #
-# Cookbook Name:: kibana
-# Recipe:: default
+# Cookbook Name:: log-monitor
+# Recipe:: kibana
 #
 # Copyright (C) 2015 YOUR_NAME
 #
 # All rights reserved - Do Not Redistribute
-#
-include_recipe 'apt'
-include_recipe 'java' if node['log-monitor']['install_java']
+# ------------------------------------------------------------------------------
+
+include_recipe 'log-monitor::common'
+
+# we need a webserver for proxying the kibana server
 include_recipe 'nginx'
 
 apt_repository 'kibana' do

@@ -6,6 +6,7 @@
 # -----------------------------------------------------------------------------
 
 default['wso2']['hostname'] = 'localhost'
+default['wso2']['mgthostname'] = 'localhost'
 default['wso2']['login_server'] = 'localhost'
 default['wso2']['kerberos_server'] = 'localhost'
 default['wso2']['bam_server'] = 'localhost'

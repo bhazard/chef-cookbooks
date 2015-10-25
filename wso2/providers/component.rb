@@ -44,6 +44,14 @@ action :install do
     mode "0774"
   end
 
+# Create a cert
+  cert = ssl_certificate "#{service_name}" do
+    namespace node['wso2']['hostname']
+  end
+
+  log "#{node['wso2']['hostname']} certificate is here: #{cert.cert_path}"
+  log "#{node['wso2']['hostname']} pk is here: #{cert.key_path}"
+
   # Create an init script
   template "/etc/init.d/#{service_name}" do
     source "generic_init_script.erb"
@@ -81,6 +89,7 @@ action :install do
         group node['wso2']['group']
         mode "0664"
         variables({hostname: node['wso2']['hostname'],
+                   mgthostname: node['wso2']['mgthostname'],
                    login_server: node['wso2']['login_server'],
                    admin_user: node['wso2']['admin_user'],
                    admin_password: node['wso2']['admin_password'],

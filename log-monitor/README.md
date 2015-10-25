@@ -33,8 +33,9 @@ Include `log-monitor::kibana` in your node's `run_list`:
 ```json
 {
   "run_list": [
-    "recipe[logstash::elasticsearch]",
-    "recipe[logstash::kibana]"
+    "recipe[log-monitor::elasticsearch]",
+    "recipe[log-monitor::logstash]",
+    "recipe[log-monitor::kibana]"
   ]
 }
 ```

@@ -7,26 +7,20 @@ VAGRANTFILE_API_VERSION = '2'
 Vagrant.require_version '>= 1.5.0'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # All Vagrant configuration is done here. The most common configuration
-  # options are documented and commented below. For a complete reference,
-  # please see the online documentation at vagrantup.com.
+  config.cache.auto_detect = true if Vagrant.has_plugin?('vagrant-cachier')
+  config.berkshelf.enabled = true
 
-  config.vm.hostname = 'vector-berkshelf'
-
-  # Set the version of chef to install using the vagrant-omnibus plugin
-  # NOTE: You will need to install the vagrant-omnibus plugin:
-  #
-  #   $ vagrant plugin install vagrant-omnibus
-  #
-  if Vagrant.has_plugin?("vagrant-omnibus")
-    config.omnibus.chef_version = 'latest'
+  if Vagrant.has_plugin?('vagrant-hostmanager')
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+    config.hostmanager.include_offline = true
   end
 
-  # Every Vagrant virtual environment requires a box to build off of.
-  # If this value is a shorthand to a box in Vagrant Cloud then
-  # config.vm.box_url doesn't need to be specified.
   config.vm.box = 'chef/ubuntu-14.04'
 
+#  if Vagrant.has_plugin?("vagrant-omnibus")
+#    config.omnibus.chef_version = 'latest'
+# end
 
   # Assign this VM to a host-only network IP, allowing you to access it
   # via the IP. Host-only networks can talk to the host machine as well as
@@ -64,7 +58,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Enabling the Berkshelf plugin. To enable this globally, add this configuration
   # option to your ~/.vagrant.d/Vagrantfile file
-  config.berkshelf.enabled = true
 
   # An array of symbols representing groups of cookbook described in the Vagrantfile
   # to exclusively install and copy to Vagrant's shelf.

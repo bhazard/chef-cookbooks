@@ -24,6 +24,7 @@ depends 'apt', '~> 2.6.1'
 depends 'java', '~> 1.31.0'
 depends 'zip', '~> 1.1.0'
 depends 'swap_tuning', '~> 0.1.4'
+depends 'ssl_certificate', '~> 1.4.0'
 
 # Development dependencies ... is there a way to have these only for dev envs?
 depends 'vim', '~> 1.1.2'

@@ -124,7 +124,8 @@ The recipes support a default environment as well as a `development` and a
 the WSO2 samples to be installed and run (e.g., `subversion` and `maven`).  The
 `chef-development` environment is also configured to not start the service to
 facilitate reviewing the unzipped directories before the server starts for the
-first time.
+first time.  This behavior may be over-ridden by setting 
+`node['wso2']['auto_start']` to `true`.
 
 ### Testing with Vagrant
 
