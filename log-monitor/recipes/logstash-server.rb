@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: logstash
-# Recipe:: default
+# Cookbook Name:: log-monitor
+# Recipe:: logstash-server
 #
-# Copyright (C) 2015 YOUR_NAME
+# Copyright (C) 2015 Bill Hazard
 #
 # All rights reserved - Do Not Redistribute
 # ------------------------------------------------------------------------------
