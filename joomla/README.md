@@ -1,6 +1,6 @@
 # joomla-cookbook
 
-TODO: Enter the cookbook description here.
+Yet Another Cookbook for Joomla.
 
 ## Supported Platforms
 
