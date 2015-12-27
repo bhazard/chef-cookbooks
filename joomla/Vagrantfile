@@ -18,6 +18,10 @@ HOSTNAME = 'dev'
 FQDN = "#{HOSTNAME}.#{DOMAIN}"
 SUBNET = '192.168.8'
 DEBUG = false   # Set to true for verbose output
+# On our local (host) machine, we will be able to see and edit the files that
+# are used by the guest (virtual) machine.
+LOCAL_DOCROOT = '~/www'
+DOCROOT = '/var/www'
 
 MEMORY = 2048
 
@@ -42,8 +46,13 @@ Vagrant.configure('2') do |config|
   config.hostmanager.aliases = %W( admin.#{DOMAIN} empty.#{DOMAIN} ) if Vagrant.has_plugin?('vagrant-hostmanager')
 
   config.vm.box = 'bento/ubuntu-14.04'
+  config.vm.box_check_update = false
 
   config.vm.network :private_network, ip: "#{SUBNET}.11"
+  config.vm.synced_folder LOCAL_DOCROOT, DOCROOT, create: true,
+    owner: "vagrant",
+    group: "www-data",
+    mount_options: ["dmode=775,fmode=664"]
 
   config.vm.provider :virtualbox do |vb|
     vb.name = config.vm.hostname
