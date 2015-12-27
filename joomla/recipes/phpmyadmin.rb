@@ -9,8 +9,14 @@
 # -----------------------------------------------------------------------------
 
 # We expect that apache is already installed, as well as PHP
-
+package 'php5-mcrypt'
 package 'phpmyadmin'
+
+bash 'Enable mcrypt for phpmyadmin' do
+  code 'php5enmod mcrypt'
+  not_if 'ls /etc/php5/apache2/conf.d/*mcrypt.ini'
+  notifies :restart, "service[apache2]"
+end
 
 # Configure apache to serve the site
 template '/etc/apache2/sites-available/010-phpmyadmin.conf' do

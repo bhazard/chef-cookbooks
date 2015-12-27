@@ -1,6 +1,14 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# This vagrantfile drives the dev environment for the joomla cookbook
+# 
+# Create the following sites: admin site, n other sites
+# Templates:
+# - admin (control over other sites)
+# - blank (empty site as if you had just run the Joomla installer)
+# - marketing starter template (from joomla-template project)
+
 # ----------------------------------------------------------------------------
 # Things that might need tweaking for your computer
 # ----------------------------------------------------------------------------
@@ -13,13 +21,13 @@ DEBUG = false   # Set to true for verbose output
 
 MEMORY = 2048
 
-# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
-VAGRANTFILE_API_VERSION = '2'
+# ----------------------------------------------------------------------------
 
 Vagrant.require_version '>= 1.5.0'
 
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+Vagrant.configure('2') do |config|
 
+# Configure vagrant plugins
   config.cache.auto_detect = true if Vagrant.has_plugin?('vagrant-cachier')
   config.omnibus.chef_version = 'latest' if Vagrant.has_plugin?('vagrant-omnibus')
   config.berkshelf.enabled = true
@@ -31,18 +39,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.hostname = FQDN
-  config.hostmanager.aliases = %W(#{HOSTNAME}) if Vagrant.has_plugin?('vagrant-hostmanager')
+  config.hostmanager.aliases = %W( admin.#{DOMAIN} empty.#{DOMAIN} ) if Vagrant.has_plugin?('vagrant-hostmanager')
 
   config.vm.box = 'bento/ubuntu-14.04'
 
   config.vm.network :private_network, ip: "#{SUBNET}.11"
 
   config.vm.provider :virtualbox do |vb|
+    vb.name = config.vm.hostname
     vb.customize ["modifyvm", :id, "--memory", MEMORY]
   end
 
-  # The path to the Berksfile to use with Vagrant Berkshelf
-  # config.berkshelf.berksfile_path = "./Berksfile"
+  # Patch ubuntu "stdin: is not a tty" error
+  config.vm.provision 'shell', inline: "sudo sed -i \'s/^mesg n$/tty -s \\&\\& mesg n/g\' /root/.profile"
 
   # An array of symbols representing groups of cookbook described in the Vagrantfile
   # to exclusively install and copy to Vagrant's shelf.

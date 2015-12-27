@@ -12,7 +12,7 @@ include_recipe 'vim'
 include_recipe 'apt'
 include_recipe 'zip'
 
-node.default['set_fqdn'] = '*.joomla.local'
+node.default['set_fqdn'] = "*.#{node['joomla']['domain']}"
 include_recipe 'hostnames::default'
 
 # Install apache before php
@@ -25,12 +25,16 @@ include_recipe 'joomla::phpmyadmin'
 package 'git'
 
 # Configure apache to serve the site
-template '/etc/apache2/sites-available/100-joomla.conf' do
+template '/etc/apache2/sites-available/101-joomla.conf' do
   source 'joomla-site.conf.erb'
+  variables ({
+    :ServerName => 'empty.joomla.local',
+    :DocumentRoot => '/var/www/empty-joomla-template'
+    })
   mode 0644
 end
-link '/etc/apache2/sites-enabled/100-joomla.conf' do
-  to '/etc/apache2/sites-available/100-joomla.conf'
+link '/etc/apache2/sites-enabled/101-joomla.conf' do
+  to '/etc/apache2/sites-available/101-joomla.conf'
   notifies :restart, "service[apache2]"
 end
 
@@ -46,39 +50,9 @@ end
 # Install PHP-FPM
 #include_recipe 'php-fpm::default'
 
-# Joomla install section
-directory node['joomla']['dir'] do
-  owner node['joomla']['user']
-  group node['joomla']['group']
-  mode 0755
-  action :create
-  recursive true
-end
+include_recipe 'joomla::empty-site'
+include_recipe 'joomla::template-site'
 
-log "**************"
-log "Domain is #{node['joomla']['domain']}"
-log "**************"
-# Download joomla
-unless node['joomla']['download_url'].empty?
-  remote_file "#{Chef::Config[:file_cache_path]}/joomla.zip" do
-    source node['joomla']['download_url']
-    mode '0644'
-    not_if { ::File.exist?(File.join(node['joomla']['dir'], 'index.php')) }
-  end
-  execute 'Unzip Joomla' do
-    cwd node['joomla']['dir']
-    command "unzip -q #{Chef::Config[:file_cache_path]}/joomla.zip"
-    not_if { ::File.exist?(File.join(node['joomla']['dir'], 'index.php')) }
-  end
-end
-
-# Configure Joomla
-  template File.join(node['joomla']['dir'], 'configuration.php') do
-    source 'configuration.php.erb'
-    owner node['joomla']['user']
-    group node['joomla']['group']
-    mode 0644
-  end
 
   # Database Configuration stuff
   case node['joomla']['db']['type']
@@ -130,16 +104,3 @@ end
     log "Unable to setup database for #{node['joomla']['db']['type']}"
   end
 
-  directory 'Remove Joomla Install directory' do
-    path File.join(node['joomla']['dir'], 'installation')
-    action :delete
-    recursive true
-  end
-
-bash 'Ensure correct permissions & ownership' do
-  cwd node['joomla']['dir']
-  code <<-EOH
-  chown -R #{node['joomla']['user']}:#{node['joomla']['group']} \
-  #{node['joomla']['dir']}
-  EOH
-end

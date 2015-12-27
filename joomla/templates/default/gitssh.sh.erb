@@ -1,0 +1,10 @@
+#!/bin/bash
+# 
+# To Use:
+# - upload the pub to github as the deploy key
+# - put your pem in .ssh with proper perms
+# - set GIT_SSH to point to this script
+# 
+# AND ... be sure to use correct URL format:
+#   git clone git@github.com:workwave-marketing/empty-joomla-template
+/usr/bin/env ssh -q -2 -o StrictHostKeyChecking=no -i <%= @KeyPath %> $1 $2
