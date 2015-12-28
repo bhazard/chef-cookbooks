@@ -104,3 +104,16 @@ include_recipe 'joomla::template-site'
     log "Unable to setup database for #{node['joomla']['db']['type']}"
   end
 
+# Update PHP5 config to include settings needed by joomla
+template '/etc/php5/mods-available/30-joomla.ini' do
+  source 'joomla-php5.ini.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  notifies :restart, "service[apache2]"
+end
+link '/etc/php5/apache2/conf.d/30-joomla.ini' do
+  to '/etc/php5/mods-available/30-joomla.ini'
+  notifies :restart, "service[apache2]"
+end
+

@@ -1,0 +1,15 @@
+# Check here for more details: https://docs.joomla.org/Htaccess_examples_(security)
+# This file will be loaded as part of the main apache config, so affects all
+# sites on this server.
+<Directory /var/www/>
+	Options -Indexes
+	Options FollowSymLinks
+	AllowOverride None
+	Require all granted
+</Directory>
+ServerTokens OS
+ServerSignature Off
+# Disable access to git directory
+<DirectoryMatch "/\.git">
+   Require all denied
+</DirectoryMatch>
