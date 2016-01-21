@@ -22,7 +22,10 @@ template "#{SSHDIR}/new-#{REPO}_gitssh.sh" do
     })
 end
 
-# Install the key for this repo
+# Install the key for this repo.  The keyfile is not under source control.  To
+# supply the keyfile, place it in a directory called "keys" under the guest's
+# /vagrant directory (on the host, keys will be created in the same directory
+# as the Vagrantfile).
 
 remote_file "#{KEYPATH}" do
   source "file:///vagrant/keys/#{KEYNAME}"
