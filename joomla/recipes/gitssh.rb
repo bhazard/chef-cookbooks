@@ -24,8 +24,8 @@ end
 
 # Install the key for this repo
 
-cookbook_file "#{KEYPATH}" do
-  source "keys/#{KEYNAME}"
+remote_file "#{KEYPATH}" do
+  source "file:///vagrant/keys/#{KEYNAME}"
   owner GITUSER
   group GITUSER
   mode '0600'
