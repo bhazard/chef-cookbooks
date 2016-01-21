@@ -14,7 +14,7 @@
 # ----------------------------------------------------------------------------
 
 DOMAIN = 'joomla.local'
-HOSTNAME = 'dev'
+HOSTNAME = 'chef'
 FQDN = "#{HOSTNAME}.#{DOMAIN}"
 SUBNET = '192.168.8'
 DEBUG = false   # Set to true for verbose output
