@@ -21,7 +21,8 @@ recipe 'is', 'Installs WSO2 Identity Server'
 end
 
 depends 'apt', '~> 2.6.1'
-depends 'java', '~> 1.31.0'
+# bump from 1.31.0
+depends 'java', '~> 1.42.0'
 depends 'zip', '~> 1.1.0'
 depends 'swap_tuning', '~> 0.1.4'
 depends 'ssl_certificate', '~> 1.4.0'
