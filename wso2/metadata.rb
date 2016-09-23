@@ -4,7 +4,7 @@ maintainer_email 'YOUR_EMAIL'
 license          'Apache-2.0'
 description      'Installs/Configures WSO2 server components'
 long_description 'Installs/Configures WSO2 server components'
-version          '0.5.0'
+version          '0.6.0'
 
 recipe 'default', 'Installs all the SOA related tools'
 #recipe 'wso2greg', 'Installs WSO2 Registry'
