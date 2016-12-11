@@ -1,0 +1,13 @@
+DEPENDENCIES
+  openvas
+    path: .
+    metadata: true
+
+GRAPH
+  apt (2.6.1)
+  nmap (0.1.0)
+  openvas (0.1.0)
+    apt (~> 2.6.1)
+    nmap (> 0.0.0)
+    vim (> 0.0.0)
+  vim (2.0.2)
